@@ -4,7 +4,9 @@ dev-story
 ![](https://github.com/IntelDevZone/dev-story/blob/master/creative/screenshot1.jpg)
 ![](https://github.com/IntelDevZone/dev-story/blob/master/creative/screenshot2.jpg)
 ![](https://github.com/IntelDevZone/dev-story/blob/master/creative/screenshot3.jpg)
-**An open-source mobile app. Coming soon to Google Play.**
+**An open-source mobile app.**
+
+[![](https://github.com/IntelDevZone/dev-story/blob/master/creative/en_generic_rgb_wo_45.png)](https://play.google.com/store/apps/details?id=com.intel.hackthecode)
 
 Table of Contents
 -----------------  
