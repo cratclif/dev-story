@@ -36,6 +36,8 @@ We’re bringing developers together from around the world to build something sp
 
 If your code makes the cut, you’ll see it in the next update. And you’ll take the credit.
 
+[Read the full story at the Intel® Developer Zone](https://software.intel.com/en-us/android-devstory)
+
 Who is this for?
 ------------
 Anyone with experience with HTML, CSS and JavaScript.
