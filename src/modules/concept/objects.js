@@ -392,7 +392,7 @@ game.module(
         },
         
         display: function(){
-            if(game.scene.player.unicorning || game.scene.player.reversingTime || game.scene.player.caffeinated || game.scene.player.playingVideo || game.scene.player.sleeping || game.scene.player.eating){
+            if(game.scene.player.unicorning || game.scene.player.reversingTime || game.scene.player.caffeinated || game.scene.player.playingVideo || game.scene.player.sleeping || game.scene.player.eating || game.scene.player.reverseXAndY){
                 // Reduce the opacity of the sprite to indicate it can't be picked up when another penalty or power-up is in effect
                 this.sprite.alpha = 0.5; 
             }else{
@@ -552,7 +552,7 @@ game.module(
         },
         
         display: function(){
-            if(game.scene.player.unicorning || game.scene.player.reversingTime || game.scene.player.caffeinated || game.scene.player.playingVideo || game.scene.player.sleeping || game.scene.player.eating){
+            if(game.scene.player.unicorning || game.scene.player.reversingTime || game.scene.player.caffeinated || game.scene.player.playingVideo || game.scene.player.sleeping || game.scene.player.eating || game.scene.player.reverseXAndY){
                 this.sprite.alpha = 0.5; 
             }else{
                 this.sprite.alpha = 1; 
@@ -616,7 +616,7 @@ game.module(
         },
         
         display: function(){
-            if(game.scene.player.unicorning || game.scene.player.reversingTime || game.scene.player.caffeinated || game.scene.player.playingVideo || game.scene.player.sleeping || game.scene.player.eating){
+            if(game.scene.player.unicorning || game.scene.player.reversingTime || game.scene.player.caffeinated || game.scene.player.playingVideo || game.scene.player.sleeping || game.scene.player.eating || game.scene.player.reverseXAndY){
                 this.sprite.alpha = 0.5; 
             }else{
                 this.sprite.alpha = 1; 
@@ -632,10 +632,65 @@ game.module(
         }  
     }); 
     
+    //Make x and y negative so need to go left for right and up for down etc...
     App.Concept.Distraction4 = App.Concept.Mover.extend({
-        /* XDK_AMBUSH 
-        Try creating an additional distraction based on the behaviours above.
-        */
+        init: function(){
+            this.radius = 32 * App.deviceScale();
+            this.location = game.scene.gameLayer.getRandomPositionInGameWorld();
+            this.velocity = new game.Vector();
+            this.acceleration = new game.Vector();
+            this.maxSpeed = 120 * App.deviceScale();
+            this.wanderSpeed = 50 * App.deviceScale();
+            this.maxForce = 16 * App.deviceScale();
+            this.wanderRadius = 20 * App.deviceScale();
+            this.seekRadius = 200 * App.deviceScale();
+            this.desiredSeparation = (this.radius * 3) * App.deviceScale();
+            this.wallOffset = 50 * App.deviceScale();
+            this.fading = false;
+            
+            var asset = 'concept/level_' + (game.scene.level+1) + '_distraction_swapXY_01.png';
+            this.sprite = new game.Sprite(asset);
+            this.sprite.scale.set(0.7 * App.deviceScale(), 0.7 * App.deviceScale());
+            this.sprite.anchor.set(0.5, 0.5);
+            
+            game.scene.gameLayer.container.addChild(this.sprite);            
+            game.scene.addObject(this);
+        },
+        
+        causeEffect: function(){
+            // Trigger a visual effect to distract the player
+            game.scene.player.swapXAndY();
+        },
+        
+        applyBehaviours: function(influenceGroup_){
+            var wanderInput = this.wander();
+            var proximitySeekInput = this.proximitySeek(game.scene.player.location);
+            var avoidWallsInput = this.avoidWalls();
+            
+            var wanderInfluence = wanderInput.multiply(1);
+            var proximitySeekInfluence = proximitySeekInput.multiply(1);
+            var avoidWallsInfluence = avoidWallsInput.multiply(1);
+            
+            this.applyForce(wanderInfluence);
+            this.applyForce(proximitySeekInfluence);
+            this.applyForce(avoidWallsInfluence);
+        },
+        
+        display: function(){
+            if(game.scene.player.unicorning || game.scene.player.reversingTime || game.scene.player.caffeinated || game.scene.player.playingVideo || game.scene.player.sleeping || game.scene.player.eating || game.scene.player.reverseXAndY){
+                this.sprite.alpha = 0.5; 
+            }else{
+                this.sprite.alpha = 1; 
+            }
+            this._super();
+        },
+        
+        fade: function(){
+            if(!this.fading){
+                this.causeEffect();
+                this._super();
+            }
+        }                                                                              
     }); 
     
     // IDEA CLASSES
@@ -1038,7 +1093,7 @@ game.module(
         },
         
         display: function(){
-            if(game.scene.player.unicorning || game.scene.player.reversingTime || game.scene.player.caffeinated || game.scene.player.playingVideo || game.scene.player.sleeping || game.scene.player.eating){
+            if(game.scene.player.unicorning || game.scene.player.reversingTime || game.scene.player.caffeinated || game.scene.player.playingVideo || game.scene.player.sleeping || game.scene.player.eating || game.scene.player.reverseXAndY){
                 this.sprite.alpha = 0.5; 
             }else{
                 this.sprite.alpha = 1; 
@@ -1094,7 +1149,7 @@ game.module(
         },
         
         display: function(){
-            if(game.scene.player.unicorning || game.scene.player.reversingTime || game.scene.player.caffeinated || game.scene.player.playingVideo || game.scene.player.sleeping || game.scene.player.eating){
+            if(game.scene.player.unicorning || game.scene.player.reversingTime || game.scene.player.caffeinated || game.scene.player.playingVideo || game.scene.player.sleeping || game.scene.player.eating || game.scene.player.reverseXAndY){
                 this.sprite.alpha = 0.5; 
             }else{
                 this.sprite.alpha = 1; 
@@ -1150,7 +1205,7 @@ game.module(
         },
         
         display: function(){
-            if(game.scene.player.unicorning || game.scene.player.reversingTime || game.scene.player.caffeinated || game.scene.player.playingVideo || game.scene.player.sleeping || game.scene.player.eating){
+            if(game.scene.player.unicorning || game.scene.player.reversingTime || game.scene.player.caffeinated || game.scene.player.playingVideo || game.scene.player.sleeping || game.scene.player.eating || game.scene.player.reverseXAndY){
                 this.sprite.alpha = 0.5; 
             }else{
                 this.sprite.alpha = 1; 
@@ -1248,7 +1303,8 @@ game.module(
                 game.Texture.fromImage('concept/character_face_04_content.png'),
                 game.Texture.fromImage('concept/character_face_05_hypnotised.png'),
                 game.Texture.fromImage('concept/character_face_06_squint.png'),
-                game.Texture.fromImage('concept/character_face_07_asleep.png')
+                game.Texture.fromImage('concept/character_face_07_asleep.png'),
+                game.Texture.fromImage('concept/character_face_08_confused.png')
             ]);
             this.face.anchor.set(0.5, 0.5);
             this.face.tint = game.scene.palette.dark;
@@ -1349,7 +1405,7 @@ game.module(
         distract: function(){
             // Check to see whether powerups or distractions are in effect
             // For performance reasons we disabled stacking of distractions and powerups but you can create interesting combos by disabling this
-            if(!this.unicorning && !this.reversingTime && !this.caffeinated && !this.playingVideo && !this.sleeping && !this.eating){
+            if(!this.unicorning && !this.reversingTime && !this.caffeinated && !this.playingVideo && !this.sleeping && !this.eating && !this.reverseXAndY){
                 
                 // Check for collisions with distractions
                 var i = game.scene.seekers1.length;
@@ -1381,13 +1437,23 @@ game.module(
                         seeker.fade();
                     }
                 }
+                
+                var i = game.scene.seekers4.length;
+                while (i--){
+                    var seeker = game.scene.seekers4[i];
+                    var d = this.location.distance(seeker.location);
+                    if (d < this.radius + seeker.radius){
+                        this.gulp();
+                        seeker.fade();
+                    }
+                }
             }
         },
         
         powerUp: function(){
             // Check to see whether powerups or distractions are in effect
             // For performance reasons we disabled stacking of distractions and powerups but you can create interesting combos by disabling this
-            if(!this.unicorning && !this.reversingTime && !this.caffeinated && !this.playingVideo && !this.sleeping && !this.eating){
+            if(!this.unicorning && !this.reversingTime && !this.caffeinated && !this.playingVideo && !this.sleeping && !this.eating && !this.reverseXAndY){
                 
                 // Check for collisions with powerups
                 var i = game.scene.powerUps1.length;
@@ -1611,6 +1677,50 @@ game.module(
             this.sleeping = false;
         },
         
+        swapXAndY: function(){
+            // Initiation of sleep effect. Combines two shaders (blur and greyscale) to create the effect but note frame rate check to only run both on high-spec devices
+            
+            this.face.gotoAndStop(7);
+            
+            game.scene.grayFilter.gray = 0;
+            game.scene.blurFilter.blur = 3;
+            
+            this.swapXYGroup = new game.TweenGroup();
+            this.swapXYGroup.onComplete = this.endSwapXAndY.bind(this);
+            
+            if (App.getFrameRate() > 45){
+                game.scene.playerLayer.container.filters = [game.scene.grayFilter, game.scene.blurFilter];
+                
+                this.blurTween = new game.Tween(game.scene.blurFilter);
+                this.blurTween.to({blur:16}, 3000);
+                this.blurTween.easing(game.Tween.Easing.Bounce.In);
+                this.blurTween.repeat(1).yoyo();
+                this.swapXYGroup.add(this.blurTween);
+            }else{
+                game.scene.playerLayer.container.filters = [game.scene.grayFilter];
+            }
+            
+            this.grayTween = new game.Tween(game.scene.grayFilter);
+            this.grayTween.to({gray:1}, 3000);
+            this.grayTween.easing(game.Tween.Easing.Bounce.In);
+            this.grayTween.repeat(1).yoyo();
+            this.swapXYGroup.add(this.grayTween);
+            
+            this.swapXYGroup.start();
+
+            App.playSound("confused", false, 0.5);
+            
+            this.reverseXAndY = true;
+        },
+        
+        endSwapXAndY: function(){
+            this.face.gotoAndStop(0);
+            game.scene.gameLayer.container.filters = undefined;
+            game.scene.playerLayer.container.filters = undefined;
+            game.scene.hud.container.filters = undefined;
+            this.reverseXAndY = false;
+        },
+        
         eat: function(){
             // Initiation of noodles effect, simply adds a gravitational force to the player which causes him to sink toward the bottom of the screen
             this.face.gotoAndStop(5);
@@ -1762,12 +1872,13 @@ game.module(
         }
     });
     
-    App.Concept.InputControl = game.Class.extend({
+    App.Concept.InputControl = game.Class.extend({    
+        
         init: function(){
-            /* XDK_SHAKE 
-            The inputControl class takes touch or mouse based input and converts them to a velocity vector for the player. Can the accelerometer be used to provide a velocity vector instead?
-            */
-            
+            this.supportsAccelerometer = false;
+            this.accelerometer = new game.Vector();
+            this.accelerometer.x = 0;
+            this.accelerometer.y = 0;
             this.steering = false;
             this.origin = new game.Vector();
             this.steeringVector = new game.Vector();
@@ -1778,16 +1889,40 @@ game.module(
             this.guide = new game.PIXI.Graphics();
             game.scene.hud.container.addChild(this.guide);
             game.scene.addObject(this);
+            
+            var options = { frequency: 5 };  // Update every 5 milliseconds
+            if (typeof navigator.accelerometer != 'undefined') {            
+                if (this.watchID!=null)
+                {
+                    navigator.accelerometer.clearWatch(this.watchID);
+                    this.watchID = null;
+                }                                             
+                this.watchID = navigator.accelerometer.watchAcceleration(this.onAccelerometerSuccess.bind(this),this.onAccelerometerError.bind(this), options);
+            }
         },
         
         getAngle: function(){
             return App.heading(this.steeringVector)+(Math.PI*0.5);
+            
         },
             
         update: function(){
-            if(this.steering){
-                var mousePosClone = game.scene.mousePos.clone();
-                this.steeringVector = mousePosClone.subtract(this.origin);
+            if(this.steering || this.supportsAccelerometer === true){
+                if (this.supportsAccelerometer === true) {
+                    this.steeringVector = new game.Vector();
+                    this.steeringVector.x = this.accelerometer.x;
+                    this.steeringVector.y = this.accelerometer.y;
+                }
+                else {
+                    var mousePosClone = game.scene.mousePos.clone();
+                    this.steeringVector = mousePosClone.subtract(this.origin);
+                }
+                
+                if (game.scene.player.reverseXAndY) {
+                    this.steeringVector.x = -this.steeringVector.x;
+                    this.steeringVector.y = -this.steeringVector.y;
+                }               
+                            
                 this.steeringMagnitude = Math.min(this.steeringVector.length(), this.maxSteeringMagnitude);
                 this.steeringVector.normalize();
                 this.steeringVector.multiply(this.steeringMagnitude);
@@ -1830,13 +1965,41 @@ game.module(
             this.guide.endFill();
             
             this.guide.rotation = (this.angle);
-            this.guide.position.set(this.origin.x, this.origin.y);
+            
+            if (this.supportsAccelerometer===true)
+            {
+                var screenCenter = App.getScreenCenter();
+                if (game.scene.player.location.x > this.maxSteeringMagnitude)
+                    this.guide.position.set(this.maxSteeringMagnitude , screenCenter.y);
+                else
+                    this.guide.position.set(window.innerWidth * game.device.pixelRatio - this.maxSteeringMagnitude , screenCenter.y);
+            }
+            else
+            {
+                this.guide.position.set(this.origin.x, this.origin.y);
+            }            
         },
         
         hide: function(){
             this.guide.clear();
         }
+       ,
+        
+        onAccelerometerSuccess: function(acc) {
+            this.supportsAccelerometer = true;        
+            this.accelerometer.x = acc.y * 30;
+            this.accelerometer.y = acc.x * 30;
+        },
+
+        onAccelerometerError: function() {
+            // Accelerometer failed
+            this.accelerometer.x = 0;
+            this.accelerometer.y = 0;
+            this.supportsAccelerometer = false;
+        }
+     
     });
+    
     
     App.Concept.EnergyBar = game.Class.extend({
         // Energy bars accumulate points every time an idea sprite is acquired by the player. They fade slowly over time rewarding players who take a risk and leave acquiring ideas til later in the game (at the risk of missing some)
@@ -1917,13 +2080,13 @@ game.module(
         },
         
         ended: function(){
-            if (this.time > 0){
+            if (this.time > 0){            
                 return false;
-            }else{
+            }else{            
                 return true;
             }
         },
-        
+                
         update: function(){
             this.time -= App.getDelta();
             this.time = Math.max(this.time, 0);

@@ -38,6 +38,13 @@ game.module(
 .body(function(){
 
     App.init = function(){
+        
+        // Found when building and running on android this didn't work
+        if(typeof intel != 'undefined' && typeof intel.xdk != 'undefined' && typeof intel.xdk.device != 'undefined') {
+            intel.xdk.device.setRotateOrientation("landscape");
+            intel.xdk.device.setAutoRotate(false);
+            intel.xdk.device.managePower(true,false);  
+        }
 
         // Enable/disable sound
         App.sound_disabled = false;

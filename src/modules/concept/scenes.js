@@ -46,11 +46,13 @@ game.module(
             assets += App.requireAsset("concept/character_face_05_hypnotised.png");
             assets += App.requireAsset("concept/character_face_06_squint.png");
             assets += App.requireAsset("concept/character_face_07_asleep.png");
+            assets += App.requireAsset("concept/character_face_08_confused.png");
             assets += App.requireAsset("concept/glow_01.png");
             assets += App.requireAsset("concept/particle.png");
             assets += App.requireAsset("concept/level_"+levelString+"_distraction_cat_01.png");
             assets += App.requireAsset("concept/level_"+levelString+"_distraction_noodles_01.png");
             assets += App.requireAsset("concept/level_"+levelString+"_distraction_pillow_01.png");
+            assets += App.requireAsset("concept/level_"+levelString+"_distraction_swapXY_01.png");
             assets += App.requireAsset("concept/level_"+levelString+"_powerup_clock_01.png");
             assets += App.requireAsset("concept/level_"+levelString+"_powerup_coffee_01.png");
             assets += App.requireAsset("concept/level_"+levelString+"_powerup_drink_01.png");
@@ -73,6 +75,7 @@ game.module(
             assets += App.requireSound("audio/concept_distract_cat_01.wav", "cat");
             assets += App.requireSound("audio/concept_distract_sleep_01.wav", "sleep");
             assets += App.requireSound("audio/concept_distract_noodle_01.wav", "noodle");
+            assets += App.requireSound("audio/concept_distract_confused_01.wav", "confused");
             assets += App.requireAsset("pause.png");
             assets += App.requireAsset("pause_sound.png");
             assets += App.requireAsset("pause_vibrate.png");
@@ -186,7 +189,6 @@ game.module(
 
             // Create
             this.gameIntro = new GameIntro();
-
         },
 
         update: function(){
@@ -256,11 +258,11 @@ game.module(
             this.background = new App.Concept.Background();
             
             switch(this.level){
-                case 0:
-                    // Seekers are penalties that will follow the player if he gets too near
+                case 0:  
                     this.seeker1Count = 1;//cat
                     this.seeker2Count = 1;//pillow
                     this.seeker3Count = 0;//noodles
+                    this.seeker4Count = 1;//reverse x and y
 
                     // Evaders are the ideas the player is trying to collect
                     this.evader1Count = 6;//spark
@@ -271,13 +273,15 @@ game.module(
                     this.powerUp1Count = 1;//unicorn
                     this.powerUp2Count = 1;//clock
                     this.powerUp3Count = 0;//coffee
+                    
                     break;
                     
                 case 1:
                     this.seeker1Count = 1;//cat
                     this.seeker2Count = 2;//pillow
                     this.seeker3Count = 1;//noodles
-                    
+                    this.seeker4Count = 1;//reverse x and y
+
                     this.evader1Count = 10;//spark
                     this.evader2Count = 5;//nucleus
                     this.evader3Count = 6;//cog
@@ -291,6 +295,7 @@ game.module(
                     this.seeker1Count = 2;//cat
                     this.seeker2Count = 2;//pillow
                     this.seeker3Count = 2;//noodles
+                    this.seeker4Count = 2;//reverse x and y
 
                     this.evader1Count = 14;//spark
                     this.evader2Count = 5;//nucleus
@@ -307,6 +312,7 @@ game.module(
             this.seekers1 = [];
             this.seekers2 = [];
             this.seekers3 = [];
+            this.seekers4 = [];
             
             this.evaders1 = [];
             this.evaders2 = [];
@@ -330,6 +336,10 @@ game.module(
             
             for (var i=0; i< this.seeker3Count; i++){
                 this.seekers3[i] = new App.Concept.Distraction3();
+            }
+            
+            for (var i=0; i< this.seeker4Count; i++){
+                this.seekers4[i] = new App.Concept.Distraction4();
             }
             
             //Evaders
@@ -416,6 +426,10 @@ game.module(
                     this.seekers3[i].applyBehaviours(this.seekers3);
                 }
 
+                var i=this.seekers4.length;
+                while (i--){
+                    this.seekers4[i].applyBehaviours(this.seekers4);
+                }
 
                 var i=this.evaders1.length;
                 while (i--){
@@ -497,7 +511,7 @@ game.module(
             // Sum the energy levels of the 3 bars and combine to calculate the score for the level
             var score = (this.energyBar1.getScore() + this.energyBar2.getScore() + this.energyBar3.getScore())/3;
             game.storage.set("game_1_score", score);
-            game.system.setScene(App.Concept.Outro); 
+            game.system.setScene(App.Concept.Outro);             
         }
     });
 

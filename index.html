@@ -5,11 +5,21 @@
         <meta http-equiv="Content-type" content="text/html; charset=utf-8"> 
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
         <link href="css/style.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" charset="utf-8" src="intelxdk.js"></script>
         <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
         <script type="text/javascript">
             if("lockOrientation" in window.screen) {
-                window.screen.lockOrientation("landscape");
+                window.screen.lockOrientation(["landscape-primary", "landscape-secondary"]);
             }
+                        
+            if("mozLockOrientation" in window.screen) {
+                window.screen.mozLockOrientation(["landscape-primary", "landscape-secondary"]);
+            }
+            
+            if("msLockOrientation" in window.screen) {
+                window.screen.msLockOrientation(["landscape-primary", "landscape-secondary"]);
+            }
+            
             function onDeviceReady(){
 
                 //window.device_name = device.name;
@@ -17,6 +27,7 @@
                 //window.device_platform = device.platform;
                 //window.device_uuid = device.uuid;
                 //window.device_version = device.version;
+
 
                 navigator.splashscreen.hide();
 
